@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import { Button, Card, CardSection, Input } from './common';
+import { Button, Card, CardSection, Input, Spinner } from './common';
 
 
 // ===========================================
@@ -24,6 +24,18 @@ class LoginForm extends Component {
     onButtonPress() {
         const { email, password } = this.props;
         this.props.loginUser({ email, password } );
+    }
+
+    renderButton() {
+        if (this.props.loading) {
+            return <Spinner size="large" />
+        }
+
+        return (
+            <Button onButtonPress={this.onButtonPress.bind(this)}>
+                Login
+            </Button>
+        );
     }
 
     render() {
@@ -49,21 +61,18 @@ class LoginForm extends Component {
                 </CardSection>
 
                 <CardSection>
-                    <Button onButtonPress={this.onButtonPress.bind(this)}>
-                        Login
-                    </Button>
+                    {this.renderButton()}
                 </CardSection>
             </Card>
         );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ({ auth }) => {
     // Calling 'auth' because the reducers/index.js key is 'auth' 
-    return {
-        email: state.auth.email,
-        password: state.auth.password
-    };
+    const { email, password, loading } = auth;
+    
+    return { email, password, loading };
 };
 
 export default connect(mapStateToProps, actions)(LoginForm);
